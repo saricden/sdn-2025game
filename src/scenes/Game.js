@@ -52,35 +52,39 @@ export default class Game extends Scene {
 
     // Configure global lighting
     this.lights.enable();
-    this.lights.setAmbientColor(0x000099);
+    this.lights.setAmbientColor(0x009900);
 
     this.playerLight = this.lights.addLight(this.player.x, this.player.y, 200, 0xFFFFFF, 8);
 
     // Spawn interactive sprites
     this.map = [];
-    const moneyCount = pMath.Between(25, 50);
+    const gemCount = pMath.Between(25, 50);
     const leftLimit = -1000;
     const rightLimit = 1000;
     const topLimit = -1000;
     const bottomLimit = 1000;
 
-    for (let i = 0; i < moneyCount; i++) {
+    for (let i = 0; i < gemCount; i++) {
       const x = pMath.Between(leftLimit, rightLimit);
       const y = pMath.Between(topLimit, bottomLimit);
       
-      const money = this.physics.add.sprite(x, y, 'money');
-      money.body.setSize(18, 14);
-      money.body.setOffset(8, 14);
-
-      money.lightSrc = this.lights.addLight(money.x, money.y, 150, 0x00FF00, 4);
-
-      this.physics.add.overlap(money, this.player, () => {
-        this.sound.play('sfx-money', { detune: pMath.Between(-150, 150) });
-        this.lights.removeLight(money.lightSrc);
-        money.destroy();
+      const gem = this.physics.add.sprite(x, y, 'gem');
+      gem.body.setSize(14, 14);
+      gem.body.setOffset(3, 7);
+      gem.play({
+        key: 'Spin',
+        repeat: -1
       });
 
-      this.map.push(money);
+      gem.lightSrc = this.lights.addLight(gem.x, gem.y, 1200, 0x0000FF, 1);
+
+      this.physics.add.overlap(gem, this.player, () => {
+        this.sound.play('sfx-gem', { detune: pMath.Between(-150, 150) });
+        this.lights.removeLight(gem.lightSrc);
+        gem.destroy();
+      });
+
+      this.map.push(gem);
     }
 
     // Play music
