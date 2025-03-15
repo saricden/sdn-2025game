@@ -8,7 +8,7 @@ export default class Title extends Scene {
   create() {
     const { width: w, height: h } = this.game.scale;
 
-    this.title = this.add.text(w / 2, h / 2, 'Into the Cave', {
+    this.title = this.add.text(w / 2, h / 2, '2025 Game', {
       fontFamily: 'Arial',
       fontSize: 48,
       color: '#fff',
