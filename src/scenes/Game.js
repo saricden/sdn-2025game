@@ -1,4 +1,4 @@
-import { Scene } from 'phaser';
+import { Scene, Math as pMath } from 'phaser';
 
 export default class Game extends Scene {
   constructor() {
@@ -10,6 +10,8 @@ export default class Game extends Scene {
 
     // Create player sprite
     this.player = this.physics.add.sprite(0, 0, 'player');
+    this.player.body.setSize(22, 22);
+    this.player.body.setOffset(26, 32);
     this.player.play({
       key: 'Idle',
       repeat: -1
@@ -48,16 +50,42 @@ export default class Game extends Scene {
     this.cameras.main.startFollow(this.player);
     this.cameras.main.setZoom(2);
 
-    // Configure lighting
+    // Configure global lighting
     this.lights.enable();
-    this.lights.setAmbientColor(0x000000);
+    this.lights.setAmbientColor(0x000099);
 
     this.playerLight = this.lights.addLight(this.player.x, this.player.y, 200, 0xFFFFFF, 8);
 
     // Spawn interactive sprites
-    this.physics.add.sprite(-40, -40, 'coin');
+    this.map = [];
+    const moneyCount = pMath.Between(25, 50);
+    const leftLimit = -1000;
+    const rightLimit = 1000;
+    const topLimit = -1000;
+    const bottomLimit = 1000;
 
+    for (let i = 0; i < moneyCount; i++) {
+      const x = pMath.Between(leftLimit, rightLimit);
+      const y = pMath.Between(topLimit, bottomLimit);
+      
+      const money = this.physics.add.sprite(x, y, 'money');
+      money.body.setSize(18, 14);
+      money.body.setOffset(8, 14);
 
+      money.lightSrc = this.lights.addLight(money.x, money.y, 150, 0x00FF00, 4);
+
+      this.physics.add.overlap(money, this.player, () => {
+        this.sound.play('sfx-money', { detune: pMath.Between(-150, 150) });
+        this.lights.removeLight(money.lightSrc);
+        money.destroy();
+      });
+
+      this.map.push(money);
+    }
+
+    // Play music
+    this.music = this.sound.add('music-game', { loop: true });
+    this.music.play();
   }
 
   update() {
@@ -70,6 +98,10 @@ export default class Game extends Scene {
     // Center light
     this.playerLight.x = this.player.x;
     this.playerLight.y = this.player.y;
+
+    // Manage depths
+    this.player.setDepth(this.player.y);
+    this.map.forEach(m => m.setDepth(m.y));
     
     // Stop if moving under threshold
     if (this.player.body.velocity.x < 0.1 && this.player.body.velocity.x > -0.1) {
