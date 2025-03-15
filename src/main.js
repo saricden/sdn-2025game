@@ -5,6 +5,7 @@ import Phaser from 'phaser';
 import Preloader from './scenes/Preloader';
 import Title from './scenes/Title';
 import Game from './scenes/Game';
+import UI from './scenes/UI';
 
 const config = {
   type: Phaser.WEBGL,
@@ -13,11 +14,11 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: true,
+      debug: false,
       gravity: { y: 0 }
     }
   },
-  scene: [Preloader, Title, Game],
+  scene: [Preloader, Title, Game, UI],
   pixelArt: true
 };
 

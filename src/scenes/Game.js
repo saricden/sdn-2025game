@@ -56,9 +56,14 @@ export default class Game extends Scene {
 
     this.playerLight = this.lights.addLight(this.player.x, this.player.y, 200, 0xFFFFFF, 8);
 
+    // Launch UI
+    this.scene.launch('scene-ui', { parentScene: this });
+    this.ui = this.scene.get('scene-ui');
+
     // Spawn interactive sprites
     this.map = [];
-    const gemCount = pMath.Between(25, 50);
+    this.gemsCollected = 0;
+    const gemCount = 20;
     const leftLimit = -1000;
     const rightLimit = 1000;
     const topLimit = -1000;
@@ -80,6 +85,8 @@ export default class Game extends Scene {
 
       this.physics.add.overlap(gem, this.player, () => {
         this.sound.play('sfx-gem', { detune: pMath.Between(-150, 150) });
+        this.gemsCollected++;
+        this.ui.score.text = `${this.gemsCollected} / ${gemCount}`;
         this.lights.removeLight(gem.lightSrc);
         gem.destroy();
       });
