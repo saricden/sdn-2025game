@@ -54,7 +54,7 @@ export default class Game extends Scene {
     this.lights.enable();
     this.lights.setAmbientColor(0x009900);
 
-    this.playerLight = this.lights.addLight(this.player.x, this.player.y, 200, 0xFFFFFF, 8);
+    this.playerLight = this.lights.addLight(this.player.x, this.player.y, 200, 0xFFFFFF, 4);
 
     // Launch UI
     this.scene.launch('scene-ui', { parentScene: this });
@@ -124,7 +124,7 @@ export default class Game extends Scene {
     }
 
     // Handle animations
-    if (vx !== 0 || vx !== 0) {
+    if (vx !== 0 || vy !== 0) {
       this.player.play({
         key: 'Run',
         repeat: -1
